@@ -37,7 +37,18 @@ async function sendNotificationToTopic(topic, payload) {
       // Usamos 'data' en lugar de 'notification' para que la app cliente
       // decida si mostrar o no la notificación (por ejemplo, si es el emisor).
       data: payload,
-      topic: topic
+      topic: topic,
+      android: {
+        priority: 'high' // Para que el dispositivo despierte rápido aunque esté en reposo
+      },
+      apns: {
+        payload: {
+          aps: {
+            contentAvailable: true,
+            priority: 10
+          }
+        }
+      }
     };
 
     const response = await admin.messaging().send(message);
