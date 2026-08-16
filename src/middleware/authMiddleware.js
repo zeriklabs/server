@@ -1,4 +1,4 @@
-const admin = require('firebase-admin');
+const { getAuth } = require('firebase-admin/auth');
 
 /**
  * Middleware para verificar el Firebase ID Token enviado en la cabecera Authorization.
@@ -16,7 +16,7 @@ async function verifyToken(req, res, next) {
 
   try {
     // Verificamos el token con Firebase
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const decodedToken = await getAuth().verifyIdToken(idToken);
     
     // Adjuntamos la información del usuario a la petición por si la necesitamos después
     req.user = decodedToken;

@@ -1,4 +1,5 @@
-const admin = require('firebase-admin');
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getMessaging } = require('firebase-admin/messaging');
 const path = require('path');
 
 // Inicializar Firebase Admin SDK
@@ -15,8 +16,8 @@ function initFirebase() {
       serviceAccount = require(path.resolve(serviceAccountPath));
     }
 
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
+    initializeApp({
+      credential: cert(serviceAccount)
     });
     console.log('Firebase Admin SDK inicializado correctamente.');
   } catch (error) {
@@ -34,12 +35,10 @@ function initFirebase() {
 async function sendNotificationToTopic(topic, payload) {
   try {
     const message = {
-      // Usamos 'data' en lugar de 'notification' para que la app cliente
-      // decida si mostrar o no la notificación (por ejemplo, si es el emisor).
       data: payload,
       topic: topic,
       android: {
-        priority: 'high' // Para que el dispositivo despierte rápido aunque esté en reposo
+        priority: 'high'
       },
       apns: {
         payload: {
@@ -51,7 +50,7 @@ async function sendNotificationToTopic(topic, payload) {
       }
     };
 
-    const response = await admin.messaging().send(message);
+    const response = await getMessaging().send(message);
     console.log(`Mensaje enviado exitosamente al topic ${topic}:`, response);
     return response;
   } catch (error) {
